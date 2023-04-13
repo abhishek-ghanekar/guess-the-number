@@ -1,20 +1,57 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {useState} from "react";
+import { StyleSheet , ImageBackground,SafeAreaView} from 'react-native';
+import StartGameScreen from './screens/StartGameScreen';
+import { LinearGradient } from 'expo-linear-gradient';
+import GameScreen from "./screens/GameScreen";
+import GameOverScreen from "./screens/GameOverScreen"
+
+// end of all imports
 
 export default function App() {
+  const [userNumber,setUserNumber] = useState();
+  const [gameIsOver,setGameIsOver] = useState(true);
+
+  // end of state management
+
+
+  function pickedNumberHandler(pickedNumber) {
+    setUserNumber(pickedNumber);
+    setGameIsOver(false);
+  }
+
+  let screen = <StartGameScreen onPickNumber={pickedNumberHandler}/>;
+
+  if(userNumber) {
+    screen = <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />;
+  }
+
+  if(gameIsOver && userNumber) {
+    screen = <GameOverScreen num={userNumber}/ >;
+  }
+
+  function gameOverHandler() {
+    setGameIsOver(true);
+  }
+  
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <LinearGradient style={styles.rootScreen}  colors={['#4e0329', '#ddb']}>
+      <ImageBackground source={require('./assets/background.jpg')} resizeMode='cover' style={styles.rootScreen} imageStyle={styles.backgroundImage}>
+        <SafeAreaView style={styles.rootScreen}>
+          {screen}   
+        </SafeAreaView>
+      
+      </ImageBackground>
+     
+    </LinearGradient>
+    
   );
 }
-
+//by default views take space that they require
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  rootScreen : {
+    flex:1
   },
+  backgroundImage : {
+    opacity : 0.25
+  }
 });
